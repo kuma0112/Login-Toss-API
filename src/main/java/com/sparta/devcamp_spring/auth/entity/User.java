@@ -1,5 +1,6 @@
 package com.sparta.devcamp_spring.auth.entity;
 
+import com.sparta.devcamp_spring.auth.dto.CreateUserDto;
 import com.sparta.devcamp_spring.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -39,6 +40,15 @@ public class User extends BaseEntity {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.role = role;
+        this.isPersonalInfoVerified = true;
+    }
+
+    public User(CreateUserDto dto){
+        this.name = dto.getName();
+        this.email = dto.getEmail();
+        this.password = dto.getPassword();
+        this.phoneNumber = dto.getPhoneNumber();
+        this.role = dto.getUserRole();
         this.isPersonalInfoVerified = true;
     }
 }
