@@ -43,12 +43,12 @@ public class User extends BaseEntity {
         this.isPersonalInfoVerified = true;
     }
 
-    public User(CreateUserDto dto){
+    public User(CreateUserDto dto, UserRole role){
         this.name = dto.getName();
         this.email = dto.getEmail();
         this.password = dto.getPassword();
         this.phoneNumber = dto.getPhoneNumber();
-        this.role = dto.getUserRole();
+        this.role = role;
         this.isPersonalInfoVerified = true;
     }
 }

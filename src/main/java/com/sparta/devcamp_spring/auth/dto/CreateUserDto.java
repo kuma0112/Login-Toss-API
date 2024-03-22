@@ -9,5 +9,6 @@ public class CreateUserDto {
     private String email;
     private String password;
     private String phoneNumber;
-    private UserRole userRole = UserRole.USER;
+    private boolean isAdmin = false;
+    private String adminToken = "";
 }
