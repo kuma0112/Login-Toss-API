@@ -97,13 +97,8 @@ public class JwtProvider {
         return null;
     }
 
-        public String addBearer(String token){
-        return BEARER_PREFIX + token;
-    }
-
     //생성된 JWT를 Cookie에 저장
     public Cookie addJwtToCookie(String token, String tokenName) {
-        token = addBearer(token);
         token = URLEncoder.encode(token, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
         Cookie cookie = new Cookie(tokenName, token);
 
