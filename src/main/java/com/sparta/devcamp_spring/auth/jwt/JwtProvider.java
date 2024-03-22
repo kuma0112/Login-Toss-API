@@ -1,18 +1,27 @@
 package com.sparta.devcamp_spring.auth.jwt;
 
+import com.sparta.devcamp_spring.auth.entity.UserRole;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.MacAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -39,14 +48,15 @@ public class JwtProvider {
         algorithm = Jwts.SIG.HS256;
     }
 
-    public TokenPayload createTokenPayload(String email, TokenType tokenType)  {
+    public TokenPayload createTokenPayload(String email, UserRole role, TokenType tokenType)  {
         Date date = new Date();
         long tokenTime = TokenType.ACCESS.equals(tokenType) ? ACCESS_TOKEN_TIME : REFRESH_TOKEN_TIME;
         return new TokenPayload(
                 email,
                 UUID.randomUUID().toString(),
                 date,
-                new Date(date.getTime() + tokenTime)
+                new Date(date.getTime() + tokenTime),
+                role
         );
     }
 
@@ -54,6 +64,7 @@ public class JwtProvider {
         return BEARER_PREFIX +
                 Jwts.builder()
                         .subject(payload.getSubject()) // 사용자 식별자값(ID)
+                        .claim(ACCESS_TOKEN_HEADER, payload.getRole()) // 사용자 권한
                         .expiration(payload.getExpiresAt()) // 만료 시간
                         .issuedAt(payload.getIssuedAt()) // 발급일
                         .id(payload.getJwtId()) // JWT ID
@@ -67,11 +78,45 @@ public class JwtProvider {
      * @return Header 에서 추출한 JWT
      */
     public String getJwtFromHeader(HttpServletRequest request, TokenType tokenType) {
-        String bearerToken = request.getHeader(TokenType.ACCESS.equals(tokenType) ? ACCESS_TOKEN_HEADER : REFRESH_TOKEN_HEADER);
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
-            return bearerToken.substring(7);
+        if(Objects.equals(TokenType.ACCESS, tokenType)) {
+            String bearerToken = request.getHeader(ACCESS_TOKEN_HEADER);
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+                return bearerToken.substring(7);
+            }
         }
         return null;
+    }
+
+    public String getTokenFromRequest(HttpServletRequest request, TokenType tokenType) {
+        if(Objects.equals(TokenType.REFRESH, tokenType)) {
+            String bearerToken = Arrays.toString(request.getCookies());
+            if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(BEARER_PREFIX)) {
+                return bearerToken.substring(7);
+            }
+        }
+        return null;
+    }
+
+        public String addBearer(String token){
+        return BEARER_PREFIX + token;
+    }
+
+    //생성된 JWT를 Cookie에 저장
+    public Cookie addJwtToCookie(String token, String tokenName) {
+        token = addBearer(token);
+        token = URLEncoder.encode(token, StandardCharsets.UTF_8).replaceAll("\\+", "%20");
+        Cookie cookie = new Cookie(tokenName, token);
+
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
+
+        if (tokenName.equals(JwtProvider.REFRESH_TOKEN_HEADER)) {
+            cookie.setMaxAge(7 * 24 * 3600);
+        }
+
+        return cookie;
     }
 
     public boolean validateToken(String token) {
