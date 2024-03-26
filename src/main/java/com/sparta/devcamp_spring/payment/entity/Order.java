@@ -99,6 +99,9 @@ public class Order extends BaseEntity {
             }
 
         }
+        if (amount < 0) {
+            throw new IllegalArgumentException("최종 주문 금액이 음수가 될 수 없습니다.");
+        }
         this.amount = amount;
         return amount;
     }
