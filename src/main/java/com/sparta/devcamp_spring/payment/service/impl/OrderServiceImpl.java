@@ -98,7 +98,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = getOrderById(orderId);
         if (order.getUsedIssuedCoupon() != null) {
             IssuedCoupon issuedCoupon = order.getUsedIssuedCoupon();
-            issuedCoupon.setUsed(false); 
+            issuedCoupon.setUsed(false);
             issuedCouponRepository.save(issuedCoupon);
         }
 
@@ -112,5 +112,35 @@ public class OrderServiceImpl implements OrderService {
         Order orderById = getOrderById(orderId);
         orderById.completeOrder();
         orderRepository.save(orderById);
+    }
+
+    public double calculateMinimumOrderAmountAfterCoupons(Order order) {
+        double minimumAmount = Double.MAX_VALUE;
+
+        List<IssuedCoupon> userCoupons = issuedCouponRepository.findAllByUser(order.getUser());
+        for (IssuedCoupon coupon : userCoupons) {
+            double tempAmount = applyCoupon(order, coupon.getCoupon());
+            if (tempAmount < minimumAmount) {
+                minimumAmount = tempAmount;
+            }
+        }
+
+        return minimumAmount == Double.MAX_VALUE ? order.getAmount() : minimumAmount;
+    }
+
+    private double applyCoupon(Order order, Coupon coupon) {
+        double discountAmount = 0.0;
+        switch (coupon.getCouponType()) {
+            case "PERCENT-OFF":
+                discountAmount = order.getAmount() * coupon.getAmount() / 100;
+                break;
+            case "FIXED-AMOUNT-OFF":
+                discountAmount = coupon.getAmount();
+                break;
+            default:
+                break;
+        }
+        double finalAmount = order.getAmount() - discountAmount;
+        return finalAmount > 0 ? finalAmount : 0;
     }
 }

@@ -4,6 +4,7 @@ package com.sparta.devcamp_spring.payment.facade;
 import com.sparta.devcamp_spring.auth.entity.User;
 import com.sparta.devcamp_spring.payment.dto.CreateOrderDto;
 import com.sparta.devcamp_spring.payment.dto.OrderInfoDto;
+import com.sparta.devcamp_spring.payment.dto.OrderResponseDto;
 
 public interface PaymentFacade {
     /**
@@ -19,7 +20,7 @@ public interface PaymentFacade {
      * @return 생성된 주문
      * @throws Exception exception
      */
-    Long initOrder(CreateOrderDto createOrderDto) throws Exception;
+    OrderResponseDto initOrder(CreateOrderDto createOrderDto) throws Exception;
 
     /**
      * 주문을 대기상태로 만든다.

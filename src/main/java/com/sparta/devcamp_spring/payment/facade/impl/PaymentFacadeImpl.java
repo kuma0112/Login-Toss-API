@@ -3,6 +3,7 @@ package com.sparta.devcamp_spring.payment.facade.impl;
 import com.sparta.devcamp_spring.auth.entity.User;
 import com.sparta.devcamp_spring.payment.dto.CreateOrderDto;
 import com.sparta.devcamp_spring.payment.dto.OrderInfoDto;
+import com.sparta.devcamp_spring.payment.dto.OrderResponseDto;
 import com.sparta.devcamp_spring.payment.entity.Order;
 import com.sparta.devcamp_spring.payment.entity.Product;
 import com.sparta.devcamp_spring.payment.facade.PaymentFacade;
@@ -37,15 +38,16 @@ public class PaymentFacadeImpl implements PaymentFacade {
 
     @Override
     @Transactional
-    public Long initOrder(CreateOrderDto createOrderDto) throws Exception {
+    public OrderResponseDto initOrder(CreateOrderDto createOrderDto) throws Exception {
         Order order = orderService.createOrder(
                 createOrderDto.getUser(),
                 createOrderDto.getOrderItems(),
                 createOrderDto.getShippingInfo());
 
+        double minimumOrderAmountAfterCoupons = orderService.calculateMinimumOrderAmountAfterCoupons(order);
         orderService.applyCouponToOrder(order.getId(), createOrderDto.getCoupon());
         orderService.applyPointToOrder(order.getId(), createOrderDto.getPointAmountToUse());
-        return order.getId();
+        return new OrderResponseDto(order.getId(), minimumOrderAmountAfterCoupons);
     }
 
     @Override

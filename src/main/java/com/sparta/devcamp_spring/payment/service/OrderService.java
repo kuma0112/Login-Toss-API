@@ -86,4 +86,6 @@ public interface OrderService {
      * @throws Exception exception
      */
     Order addOrderItem(Order order, Product product, int quantity) throws Exception;
+
+    double calculateMinimumOrderAmountAfterCoupons(Order order);
 }
