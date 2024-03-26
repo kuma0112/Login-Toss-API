@@ -2,6 +2,7 @@ package com.sparta.devcamp_spring.payment.service.impl;
 
 import com.sparta.devcamp_spring.auth.entity.User;
 import com.sparta.devcamp_spring.payment.entity.*;
+import com.sparta.devcamp_spring.payment.repository.IssuedCouponRepository;
 import com.sparta.devcamp_spring.payment.repository.OrderItemRepository;
 import com.sparta.devcamp_spring.payment.repository.OrderRepository;
 import com.sparta.devcamp_spring.payment.service.IssuedCouponService;
@@ -16,11 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final IssuedCouponService issuedCouponService;
+    private final IssuedCouponRepository issuedCouponRepository;
 
     @Override
     public Order createOrder(User user, List<OrderItem> orderItems, ShippingInfo shippingInfo) {
@@ -92,9 +95,15 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public void undoOrder(Long orderId) throws Exception {
-        Order orderById = getOrderById(orderId);
-        orderById.undoOrder();
-        orderRepository.save(orderById);
+        Order order = getOrderById(orderId);
+        if (order.getUsedIssuedCoupon() != null) {
+            IssuedCoupon issuedCoupon = order.getUsedIssuedCoupon();
+            issuedCoupon.setUsed(false); 
+            issuedCouponRepository.save(issuedCoupon);
+        }
+
+        order.undoOrder();
+        orderRepository.save(order);
     }
 
     @Override
