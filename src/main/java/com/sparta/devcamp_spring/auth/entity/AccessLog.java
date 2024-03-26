@@ -11,7 +11,7 @@ public class AccessLog extends BaseEntity {
     private Long id;
 
     @Column(length = 512)
-    private String ua;
+    private String userAgent;
 
     @Column
     private String endpoint;
@@ -25,8 +25,8 @@ public class AccessLog extends BaseEntity {
 
     public AccessLog() {}
 
-    public AccessLog(String ua, String endpoint, String ip, User user) {
-        this.ua = ua;
+    public AccessLog(String userAgent, String endpoint, String ip, User user) {
+        this.userAgent = userAgent;
         this.endpoint = endpoint;
         this.ip = ip;
         this.user = user;

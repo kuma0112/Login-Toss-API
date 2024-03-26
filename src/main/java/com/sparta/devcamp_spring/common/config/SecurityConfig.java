@@ -74,7 +74,7 @@ public class SecurityConfig {
                 request.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용
                         .requestMatchers(PathRequest.toH2Console()).permitAll() // h2-console 허가
                         .requestMatchers("/auth/**").permitAll() // 로그인 & 회원가입 & Refresh Token 갱신 허가 (WHITE_LIST)
-                        .requestMatchers("/actuator/health").permitAll() // health check API 허가 (WHITE_LIST)
+                        .requestMatchers("/actuator/health").hasRole("ADMIN") // health check API 허가 (WHITE_LIST)
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리 진행
         );
 

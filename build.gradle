@@ -22,6 +22,9 @@ repositories {
 }
 
 dependencies {
+    // JSON Simple
+    implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
