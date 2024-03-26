@@ -17,12 +17,11 @@ public class IssuedCouponServiceImpl implements IssuedCouponService {
 
     @Override
     public void useCoupon(IssuedCoupon issuedCoupon) throws Exception {
-        if (!isValidCoupon(issuedCoupon) || !isCouponTypeValid(issuedCoupon)) {
-            throw new Exception("Cannot use this coupon due to invalid state or type.");
+        int updatedRows = issuedCouponRepository.useCouponIfValid(issuedCoupon.getId());
+        if (updatedRows == 0) {
+            throw new Exception("The coupon is either already used or not valid.");
         }
 
-        issuedCoupon.use();
-        issuedCouponRepository.save(issuedCoupon);
     }
 
     @Override
