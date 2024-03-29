@@ -43,11 +43,17 @@ public class PaymentFacadeImpl implements PaymentFacade {
                 createOrderDto.getUser(),
                 createOrderDto.getOrderItems(),
                 createOrderDto.getShippingInfo());
-
+        // 쿠폰 적용 후 주문 예상 금액
         double minimumOrderAmountAfterCoupons = orderService.calculateMinimumOrderAmountAfterCoupons(order);
+        // 쿠폰 적용
         orderService.applyCouponToOrder(order.getId(), createOrderDto.getCoupon());
-        orderService.applyPointToOrder(order.getId(), createOrderDto.getPointAmountToUse());
-        return new OrderResponseDto(order.getId(), minimumOrderAmountAfterCoupons);
+        // 포인트 적용
+        double pointAmountToUse = createOrderDto.getPointAmountToUse(); // 사용자가 원하는 포인트 사용 금액
+        double finalAmountAfterPoints = minimumOrderAmountAfterCoupons - pointAmountToUse;
+        finalAmountAfterPoints = finalAmountAfterPoints > 0 ? finalAmountAfterPoints : 0; // 최종 금액이 0보다 작아지지 않도록 처리
+
+        orderService.applyPointToOrder(order.getId(), pointAmountToUse);
+        return new OrderResponseDto(order.getId(), finalAmountAfterPoints);
     }
 
     @Override
