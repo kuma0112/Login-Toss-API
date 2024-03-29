@@ -20,9 +20,20 @@ public class PointServiceImpl implements PointService {
     private final PointRepository pointRepository;
     private final PointLogRepository pointLogRepository;
 
+    final double MINIMUM_POINTS_TO_USE = 2000.0; // 최소 사용 포인트 금액
+
     @Override
     @Transactional
     public void usePoint(Point point, Double amountToUse, String reason) {
+        if (amountToUse < MINIMUM_POINTS_TO_USE) {
+            throw new IllegalArgumentException("The minimum amount of points to use is " + MINIMUM_POINTS_TO_USE + ".");
+        }
+
+        // 포인트 사용 가능 여부 검사
+        if (point.getAvailableAmount() < amountToUse) {
+            throw new IllegalArgumentException("Insufficient points available.");
+        }
+
         PointLog log = PointLog.use(point, amountToUse, reason);
         pointLogRepository.save(log);
         point.getLogs().add(log);

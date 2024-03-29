@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,9 @@ public class Point extends BaseEntity {
 
     @OneToMany(mappedBy = "point")
     private List<PointLog> logs;
+
+    @Column
+    private LocalDate expirationDate;
 
     public void use(Double amountToUse) {
         if (this.availableAmount >= amountToUse){
