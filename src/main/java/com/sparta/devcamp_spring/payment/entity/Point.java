@@ -19,13 +19,18 @@ public class Point extends BaseEntity {
     private User user;
 
     @Column
-    private int availableAmount;
+    private double availableAmount;
 
     @OneToMany(mappedBy = "point")
     private List<PointLog> logs;
 
     public void use(Double amountToUse) {
-        this.availableAmount -= amountToUse;
+        if (this.availableAmount >= amountToUse){
+            this.availableAmount -= amountToUse;
+            logs.add(PointLog.use(this,amountToUse,"포인트 사용"));
+        } else {
+            throw new IllegalArgumentException("사용 가능한 포인트가 부족합니다.");
+        }
     }
 
 }

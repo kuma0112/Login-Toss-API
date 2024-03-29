@@ -17,7 +17,7 @@ public class PointLog extends BaseEntity {
     private Point point;
 
     @Column(columnDefinition = "int default 0")
-    private int amount; // 개별 적립 또는 사용 금액
+    private double amount; // 개별 적립 또는 사용 금액
 
     @Column(length = 1000)
     private String reason; // 개별 적립 또는 사용 사유
@@ -25,22 +25,19 @@ public class PointLog extends BaseEntity {
     @Column(length = 50)
     private String type; // PointLogType를 String으로 대체
 
-    public PointLog(Point point, int amount, String reason, String type) {
+    public PointLog(Point point, double amount, String reason, String type) {
         this.point = point;
         this.amount = amount;
         this.reason = reason;
         this.type = type;
     }
 
-    public PointLog(Point point, Double amount, String reason, String use) {
-        super();
+    // 불필요한 생성자 제거, `Double` 대신 `double` 사용
+    public static PointLog use(Point point, double amount, String reason) {
+        return new PointLog(point, -amount, reason, "use");
     }
 
-    public static PointLog use(Point point, Double amount, String reason) {
-        return new PointLog(point, amount, reason, "use");
-    }
-
-    public static PointLog add(Point point, int amount, String reason) {
+    public static PointLog add(Point point, double amount, String reason) {
         return new PointLog(point, amount, reason, "earn");
     }
 }
