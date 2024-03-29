@@ -32,7 +32,11 @@ public class PointLog extends BaseEntity {
         this.type = type;
     }
 
-    public static PointLog use(Point point, int amount, String reason) {
+    public PointLog(Point point, Double amount, String reason, String use) {
+        super();
+    }
+
+    public static PointLog use(Point point, Double amount, String reason) {
         return new PointLog(point, amount, reason, "use");
     }
 

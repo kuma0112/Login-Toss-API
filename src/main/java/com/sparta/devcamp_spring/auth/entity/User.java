@@ -2,6 +2,7 @@ package com.sparta.devcamp_spring.auth.entity;
 
 import com.sparta.devcamp_spring.auth.dto.CreateUserDto;
 import com.sparta.devcamp_spring.common.entity.BaseEntity;
+import com.sparta.devcamp_spring.payment.entity.Point;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,9 @@ public class User extends BaseEntity {
 
     @Column (columnDefinition = "boolean default false")
     private boolean isPersonalInfoVerified;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Point point;
 
     public User(String name, String email, String password, String phoneNumber, UserRole role){
         this.name = name;

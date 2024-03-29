@@ -68,8 +68,7 @@ public class PaymentFacadeImpl implements PaymentFacade {
 
         issuedCouponService.useCoupon(orderById.getUsedIssuedCoupon());
         String reason = "결제건 사용 : " + orderById.getOrderNumber();
-        // TODO: useEntity 업데이트시 주석 제거
-//        pointService.usePoint(user.getPoint(), orderById.getPointAmountUsed(), reason);
+        pointService.usePoint(user.getPoint(), orderById.getPointAmountUsed(), reason);
         orderService.completeOrder(orderById.getId());
         return orderId;
     }

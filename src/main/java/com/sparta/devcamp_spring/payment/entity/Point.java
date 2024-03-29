@@ -24,7 +24,7 @@ public class Point extends BaseEntity {
     @OneToMany(mappedBy = "point")
     private List<PointLog> logs;
 
-    public void use(int amountToUse) {
+    public void use(Double amountToUse) {
         this.availableAmount -= amountToUse;
     }
 

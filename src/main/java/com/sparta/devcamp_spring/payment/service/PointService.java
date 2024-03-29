@@ -1,6 +1,8 @@
 package com.sparta.devcamp_spring.payment.service;
 
 
+import com.sparta.devcamp_spring.auth.entity.User;
+import com.sparta.devcamp_spring.payment.dto.PointResponseDto;
 import com.sparta.devcamp_spring.payment.entity.Point;
 
 public interface PointService {
@@ -10,5 +12,7 @@ public interface PointService {
      * @param amountToUse 사용할 금액
      * @param reason 사용 사유
      */
-    void usePoint(Point point, int amountToUse, String reason);
+    void usePoint(Point point, Double amountToUse, String reason);
+
+    PointResponseDto checkPointAndPointHistory(User user);
 }
