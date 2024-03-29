@@ -4,6 +4,7 @@ import com.sparta.devcamp_spring.auth.entity.User;
 import com.sparta.devcamp_spring.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 
 import java.util.List;
@@ -14,10 +15,13 @@ public class Point extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Setter
     @OneToOne
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Setter
     @Column
     private double availableAmount;
 

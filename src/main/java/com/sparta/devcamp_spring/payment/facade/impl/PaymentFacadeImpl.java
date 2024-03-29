@@ -76,6 +76,13 @@ public class PaymentFacadeImpl implements PaymentFacade {
         String reason = "결제건 사용 : " + orderById.getOrderNumber();
         pointService.usePoint(user.getPoint(), orderById.getPointAmountUsed(), reason);
         orderService.completeOrder(orderById.getId());
+
+        // 주문 금액의 0.5%를 포인트로 적립
+        double pointsToEarn = orderById.getAmount() * 0.005;
+        String earnReason = "주문 완료 적립 : " + orderById.getOrderNumber();
+        // 포인트 적립 로직 호출 (pointService에 적립 메서드 추가가 필요)
+        pointService.addPointsToUser(user, pointsToEarn);
+
         return orderId;
     }
 

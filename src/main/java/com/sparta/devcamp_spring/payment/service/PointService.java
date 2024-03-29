@@ -15,4 +15,6 @@ public interface PointService {
     void usePoint(Point point, Double amountToUse, String reason);
 
     PointResponseDto checkPointAndPointHistory(User user);
+
+    void addPointsToUser(User user, double orderAmount);
 }

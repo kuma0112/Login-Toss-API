@@ -36,4 +36,18 @@ public class PointServiceImpl implements PointService {
         List<PointLog> pointLog = pointLogRepository.findByPoint(point);
         return new PointResponseDto(point.getAvailableAmount(), pointLog);
     }
+
+    public void addPointsToUser(User user, double orderAmount) {
+        double pointsEarned = orderAmount * 0.05; // 주문 금액의 5% 포인트 적립
+        // 사용자의 포인트를 찾거나, 없으면 새로 생성
+        Point userPoints = pointRepository.findByUser(user);
+        if (userPoints == null) {
+            userPoints = new Point();
+            userPoints.setUser(user);
+            userPoints.setAvailableAmount(0);
+        }
+        userPoints.setAvailableAmount(userPoints.getAvailableAmount() + pointsEarned); // 포인트 추가
+        pointRepository.save(userPoints);
+    }
+
 }
