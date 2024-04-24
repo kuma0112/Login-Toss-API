@@ -1,6 +1,9 @@
 package com.sparta.devcamp_spring.payment.service;
 
+import com.sparta.devcamp_spring.common.security.UserDetailsImpl;
+import com.sparta.devcamp_spring.payment.dto.CouponEnrollmentDto;
 import com.sparta.devcamp_spring.payment.entity.IssuedCoupon;
+import org.springframework.http.ResponseEntity;
 
 public interface IssuedCouponService {
     /**
@@ -21,4 +24,6 @@ public interface IssuedCouponService {
      * @return 쿠폰 타입 적합한지 확인 여부
      */
     boolean isCouponTypeValid(IssuedCoupon issuedCoupon);
+
+    ResponseEntity<IssuedCoupon> enrollCoupon(UserDetailsImpl userDetails, CouponEnrollmentDto enrollmentDto);
 }

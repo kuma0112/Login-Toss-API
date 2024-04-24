@@ -50,4 +50,12 @@ public class IssuedCoupon extends BaseEntity {
         this.usedAt = new Date();
     }
 
+    public IssuedCoupon (User user, Coupon coupon) {
+        this.user = user;
+        this.coupon = coupon;
+        this.validFrom = new Date();
+        this.validUntil = new Date(System.currentTimeMillis()+ (1000L * 60 * 60 * 24 * 7)); // 유효기간 1주일
+        this.isUsed = false;
+        this.isValid = true;
+    }
 }
